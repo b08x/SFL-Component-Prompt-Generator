@@ -60,7 +60,7 @@ const App: React.FC = () => {
     let fileContent = '';
     let fileExtension = format;
     let mimeType = 'text/plain';
-    const fileName = `sfl-prompt-output-${Date.now()}`;
+    const fileName = `sfl-component-prompt-output-${Date.now()}`;
 
     if (format === 'json') {
       fileContent = JSON.stringify({ config, generatedContent }, null, 2);

@@ -25,7 +25,7 @@ const Spinner: React.FC = () => (
 const WelcomeMessage: React.FC = () => (
     <div className="flex flex-col items-center justify-center h-full text-center text-[#95aac0] p-8">
         <i className="fas fa-wand-magic-sparkles text-6xl text-[#e2a32d] mb-6"></i>
-        <h2 className="text-2xl font-bold text-gray-200 mb-2">Meta-Prompt Generator</h2>
+        <h2 className="text-2xl font-bold text-gray-200 mb-2">SFL-Component-Prompt-Generator</h2>
         <p>Configure your framework and describe your workflow on the left, then click "Generate Prompts" to see the magic happen!</p>
     </div>
 );

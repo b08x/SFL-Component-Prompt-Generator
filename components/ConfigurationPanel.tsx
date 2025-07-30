@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FrameworkConfig } from '../types';
 import { FRAMEWORK_NAMES, DOMAIN_CONTEXTS, FRAMEWORK_PARADIGMS, PROGRAMMING_LANGUAGES, WORKFLOW_EXAMPLES } from '../constants';
 import Dropdown from './ui/Dropdown';
 import Button from './ui/Button';
+import HelpModal from './HelpModal';
 
 interface ConfigurationPanelProps {
   config: FrameworkConfig;
@@ -22,13 +23,24 @@ const ReadOnlyField: React.FC<{ label: string; value: string }> = ({ label, valu
 
 
 const ConfigurationPanel: React.FC<ConfigurationPanelProps> = ({ config, setConfig, workflowDescription, setWorkflowDescription, onGenerate, isLoading }) => {
+  const [isHelpModalOpen, setHelpModalOpen] = useState(false);
+  
   const handleConfigChange = <K extends keyof FrameworkConfig,>(key: K, value: FrameworkConfig[K]) => {
     setConfig(prev => ({ ...prev, [key]: value }));
   };
 
   return (
     <div className="p-6 bg-[#333e48] h-full overflow-y-auto flex flex-col gap-6">
-      <h2 className="text-xl font-bold text-gray-200">1. Configure Framework</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-bold text-gray-200">1. Configure Framework</h2>
+         <button 
+            onClick={() => setHelpModalOpen(true)} 
+            className="text-[#95aac0] hover:text-[#e2a32d] transition-colors"
+            aria-label="Open configuration help"
+        >
+            <i className="fas fa-question-circle text-xl"></i>
+        </button>
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Dropdown label="Framework" options={FRAMEWORK_NAMES} value={config.name} onChange={e => handleConfigChange('name', e.target.value)} />
@@ -62,6 +74,8 @@ const ConfigurationPanel: React.FC<ConfigurationPanelProps> = ({ config, setConf
           <i className="fas fa-cogs mr-2"></i> Generate Prompts
         </Button>
       </div>
+
+      <HelpModal isOpen={isHelpModalOpen} onClose={() => setHelpModalOpen(false)} />
     </div>
   );
 };
