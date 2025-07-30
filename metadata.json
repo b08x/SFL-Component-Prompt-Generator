@@ -1,0 +1,6 @@
+{
+  "name": "SFL Meta-Prompt Generator-2025-07-28-630pm",
+  "description": "An interactive tool to configure the SFL-Framework Domain-Agnostic Component Meta-Prompt Template and generate framework-specific component prompts using the Gemini API.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}

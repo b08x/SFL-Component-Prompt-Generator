@@ -1,0 +1,79 @@
+{
+  "config": {
+    "name": "Docker",
+    "domainContext": "DevOps",
+    "paradigm": "Infrastructure as Code",
+    "language": "YAML",
+    "componentTypes": "Dockerfile, image, container, service, volume, network",
+    "baseClasses": "N/A",
+    "frameworkDsl": "FROM, RUN, COPY, CMD, ENTRYPOINT, ENV",
+    "integrationPatterns": "Docker Compose, Kubernetes orchestration, multi-stage builds"
+  },
+  "generatedContent": {
+    "componentPrompts": [
+      {
+        "componentName": "RAGApplicationService",
+        "integrationExample": "services: rag-app: build: . ports: - \"8000:8000\" environment: - CHROMADB_HOST=chromadb depends_on: - chromadb",
+        "prompt": "Create a Dockerfile for a Python-based RAG application. The application will serve queries and needs to connect to a ChromaDB instance. The Dockerfile should install Python dependencies from a 'requirements.txt' file, copy the application code, and define the command to start the application (e.g., Uvicorn for FastAPI or Gunicorn for Flask). Ensure the image is optimized for size and build time using multi-stage builds if appropriate. Expose the necessary port for the application.",
+        "usageExample": "Dockerfile: FROM python:3.9-slim-buster AS builder WORKDIR /app COPY requirements.txt . RUN pip install --no-cache-dir -r requirements.txt FROM python:3.9-slim-buster AS runner WORKDIR /app COPY --from=builder /app /app COPY . . CMD [\"python\", \"app.py\"]"
+      },
+      {
+        "componentName": "ChromaDBService",
+        "integrationExample": "services: chromadb: image: chromadb/chroma:latest ports: - \"8001:8000\" volumes: - chromadb_data:/chroma_data volumes: chromadb_data:",
+        "prompt": "Define a Docker Compose service configuration for ChromaDB. The service should use the official ChromaDB Docker image, map a host port to the container's internal port, and persist its data using a named volume to ensure data durability across container restarts. This service will be a backend for the RAG application.",
+        "usageExample": "docker-compose.yaml (snippet): services: chromadb: image: chromadb/chroma:latest ports: - \"8001:8000\" volumes: - chromadb_data:/chroma_data volumes: chromadb_data: {}"
+      },
+      {
+        "componentName": "DataIngestionService",
+        "integrationExample": "services: data-ingestor: build: context: ./data-ingestor volumes: - ./data_files:/app/data_files environment: - CHROMADB_HOST=chromadb depends_on: - chromadb",
+        "prompt": "Create a Dockerfile for a Python-based data ingestion script. This script will read HTML and Markdown files from a mounted volume (e.g., './data_files') and ingest them into the ChromaDB instance. The Dockerfile should set up the Python environment, install necessary libraries (e.g., `langchain`, `beautifulsoup4`, `markdown`, `chromadb`), copy the ingestion script, and define a command that runs the ingestion process. The script should be designed to be runnable as a one-off task or periodically.",
+        "usageExample": "Dockerfile for data-ingestor: FROM python:3.9-slim-buster WORKDIR /app COPY requirements.txt . RUN pip install --no-cache-dir -r requirements.txt COPY ingest_script.py . CMD [\"python\", \"ingest_script.py\"] Example ingest_script.py snippet: import os from chromadb import Client from langchain.document_loaders import TextLoader, DirectoryLoader # ... (ChromaDB client setup) # ... (Document loading and ingestion logic)"
+      }
+    ],
+    "integrationGuidance": {
+      "overview": "The system will consist of three interconnected Docker services orchestrated using Docker Compose. The 'ChromaDBService' provides the vector store backend, running in its own container with persistent storage. The 'RAGApplicationService' is the core Python RAG application that queries ChromaDB to answer user requests. The 'DataIngestionService' is a separate component responsible for loading HTML and Markdown files from a specified host directory into the ChromaDB. This modular approach allows independent scaling, updates, and maintenance of each part, leveraging Docker's Infrastructure as Code paradigm.",
+      "diagram": {
+        "edges": [
+          {
+            "from": "File System",
+            "to": "DataIngestionService",
+            "label": "Reads"
+          },
+          {
+            "from": "DataIngestionService",
+            "to": "ChromaDBService",
+            "label": "Writes Vectors"
+          },
+          {
+            "from": "RAGApplicationService",
+            "to": "ChromaDBService",
+            "label": "Queries Vectors"
+          }
+        ],
+        "nodes": [
+          {
+            "id": "File System",
+            "label": "Local File System (HTML/MD)"
+          },
+          {
+            "id": "DataIngestionService",
+            "label": "Data Ingestion Service"
+          },
+          {
+            "id": "ChromaDBService",
+            "label": "ChromaDB Service"
+          },
+          {
+            "id": "RAGApplicationService",
+            "label": "RAG Application Service"
+          }
+        ]
+      }
+    },
+    "sflSpecification": {
+      "field": "DevOps automation for Python RAG applications, focusing on Docker containerization and Infrastructure as Code for efficient deployment and management of vector databases and data ingestion processes.",
+      "mode": "Declarative YAML for Docker Compose configurations and imperative Dockerfile instructions. Concrete code examples demonstrate usage and integration patterns.",
+      "tenor": "Technical and instructional, providing actionable prompts and specific code snippets for developers and DevOps engineers to implement a containerized RAG system."
+    }
+  }
+}
